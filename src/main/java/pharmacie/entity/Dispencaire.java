@@ -10,7 +10,10 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class Dispencaire {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +26,7 @@ public class Dispencaire {
     @NotBlank
     private String contact;
 
-     @NotBlank
+    @NotBlank
     private String fonction;
 
     @NotBlank
@@ -32,7 +35,10 @@ public class Dispencaire {
     @NotBlank
     private String fax;
 
-
     @Embedded
     private AdressePostale adressePostale;
+
+    @ToString.Exclude
+    @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "dispencaire")
+    private List<Commande> commandes = new LinkedList<>();
 }

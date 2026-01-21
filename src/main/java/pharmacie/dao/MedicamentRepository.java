@@ -1,10 +1,11 @@
 package pharmacie.dao;
 
-
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import pharmacie.entity.Medicament;
 
@@ -12,13 +13,28 @@ import pharmacie.entity.Medicament;
 public interface MedicamentRepository extends JpaRepository<Medicament, Integer> {
     /**
      * Trouve un médicament à partir de son nom (unique dans Medicament)
+     * 
      * @return un médicament "optionnel"
      */
-    Optional<Medicament>findByNom(String nom);
+    Optional<Medicament> findByNom(String nom);
 
     /**
      * Trouve les médicaments disponibles (indisponible = false)
+     * 
      * @return la liste des médicaments disponibles
      */
     List<Medicament> findByIndisponibleFalse();
+
+    /**
+     * Trouver tous les médicaments disponibles à la commande pour une catégorie
+     * Un médicament est disponible à la commande si:
+     * - il n'est pas indisponible (indisponible = false)
+     * - sa quantité en stock (unitesEnStock) >= sa quantité en commande
+     * (unitesCommandees)
+     * 
+     * @param categorieCode la clé de la catégorie
+     * @return la liste des médicaments disponibles à la commande
+     */
+    @Query("SELECT m FROM Medicament m WHERE m.categorie.code = :categorieCode AND m.indisponible = false AND m.unitesEnStock >= m.unitesCommandees")
+    List<Medicament> findAvailableForOrderByCategory(@Param("categorieCode") Integer categorieCode);
 }

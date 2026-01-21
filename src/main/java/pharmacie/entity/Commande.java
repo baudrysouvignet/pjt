@@ -12,8 +12,11 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @ToString
-public class Commande{
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+public class Commande {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
@@ -22,8 +25,7 @@ public class Commande{
     @NotBlank
     private Date saisieLe;
 
-    @NotBlank
-    private Date envoyeeLe;
+    private Date envoyeeLe; // nullable - la commande est en cours si null
 
     @NotBlank
     private BigDecimal montantTotal;
@@ -36,5 +38,14 @@ public class Commande{
 
     @Embedded
     private AdressePostale adresseLivraison;
+
+    @ManyToOne(optional = false)
+    @NonNull
+    @ToString.Exclude
+    private Dispencaire dispencaire;
+
+    @ToString.Exclude
+    @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "commande")
+    private List<Ligne> lignes = new LinkedList<>();
 
 }
